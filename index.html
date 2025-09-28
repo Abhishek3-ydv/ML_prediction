@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POWERGRID Project Risk Predictor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="brand">
+                        <h1>POWERGRID Project Risk Predictor</h1>
+                        <span class="sih-badge">SIH 2024</span>
+                    </div>
+                    <div class="logo">
+                        <div class="powergrid-logo">⚡</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="app-grid">
+                    <!-- Input Section -->
+                    <section class="input-section">
+                        <div class="card">
+                            <div class="card__header">
+                                <h2>Project Parameters</h2>
+                                <div class="action-buttons">
+                                    <button class="btn btn--secondary btn--sm" id="sampleBtn">Sample Project</button>
+                                    <button class="btn btn--outline btn--sm" id="clearBtn">Clear</button>
+                                </div>
+                            </div>
+                            <div class="card__body">
+                                <form id="projectForm">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label" for="projectType">
+                                                Project Type
+                                                <span class="tooltip" title="Type of power infrastructure project">ℹ️</span>
+                                            </label>
+                                            <select id="projectType" class="form-control" required>
+                                                <option value="">Select project type</option>
+                                                <option value="Substation">Substation</option>
+                                                <option value="Overhead Line">Overhead Line</option>
+                                                <option value="Underground Cable">Underground Cable</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="terrainType">
+                                                Terrain Type
+                                                <span class="tooltip" title="Geographic terrain conditions">ℹ️</span>
+                                            </label>
+                                            <select id="terrainType" class="form-control" required>
+                                                <option value="">Select terrain</option>
+                                                <option value="Plain">Plain</option>
+                                                <option value="Hilly">Hilly</option>
+                                                <option value="Desert">Desert</option>
+                                                <option value="Coastal">Coastal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label" for="weatherRisk">
+                                                Weather Risk
+                                                <span class="tooltip" title="Expected weather impact on project">ℹ️</span>
+                                            </label>
+                                            <select id="weatherRisk" class="form-control" required>
+                                                <option value="">Select weather risk</option>
+                                                <option value="Normal">Normal</option>
+                                                <option value="Moderate">Moderate</option>
+                                                <option value="Extreme">Extreme</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="originalBudget">
+                                                Original Budget (₹ Crores)
+                                                <span class="tooltip" title="Initial project budget in Indian Rupees Crores">ℹ️</span>
+                                            </label>
+                                            <input type="number" id="originalBudget" class="form-control" min="1" step="1" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label" for="originalTimeline">
+                                                Original Timeline (Months)
+                                                <span class="tooltip" title="Planned project duration in months">ℹ️</span>
+                                            </label>
+                                            <input type="number" id="originalTimeline" class="form-control" min="1" step="1" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="regulatoryDelays">
+                                                Regulatory Delays (Days)
+                                                <span class="tooltip" title="Expected regulatory approval delays">ℹ️</span>
+                                            </label>
+                                            <input type="number" id="regulatoryDelays" class="form-control" min="0" step="1" value="0">
+                                        </div>
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="form-group">
+                                            <label class="form-label" for="vendorScore">
+                                                Vendor Score: <span id="vendorScoreValue">3</span>/5
+                                                <span class="tooltip" title="Vendor reliability and performance rating">ℹ️</span>
+                                            </label>
+                                            <input type="range" id="vendorScore" class="form-slider" min="1" max="5" step="0.1" value="3">
+                                            <div class="slider-labels">
+                                                <span>Poor (1)</span>
+                                                <span>Excellent (5)</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="materialFluctuation">
+                                                Material Cost Fluctuation: <span id="materialFluctuationValue">0</span>%
+                                                <span class="tooltip" title="Expected material cost variation from baseline">ℹ️</span>
+                                            </label>
+                                            <input type="range" id="materialFluctuation" class="form-slider" min="-30" max="30" step="1" value="0">
+                                            <div class="slider-labels">
+                                                <span>-30% (Decrease)</span>
+                                                <span>+30% (Increase)</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="laborAvailability">
+                                                Labor Availability: <span id="laborAvailabilityValue">75</span>%
+                                                <span class="tooltip" title="Expected availability of skilled labor">ℹ️</span>
+                                            </label>
+                                            <input type="range" id="laborAvailability" class="form-slider" min="50" max="100" step="1" value="75">
+                                            <div class="slider-labels">
+                                                <span>50% (Low)</span>
+                                                <span>100% (High)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Results Section -->
+                    <section class="results-section">
+                        <div class="card">
+                            <div class="card__header">
+                                <h2>Prediction Results</h2>
+                                <button class="btn btn--primary btn--sm" id="exportBtn">Export Results</button>
+                            </div>
+                            <div class="card__body">
+                                <div class="results-grid">
+                                    <div class="result-card cost-overrun">
+                                        <h3>Cost Overrun</h3>
+                                        <div class="result-value" id="costOverrun">--</div>
+                                        <div class="result-label">Predicted Increase</div>
+                                    </div>
+                                    <div class="result-card timeline-overrun">
+                                        <h3>Timeline Overrun</h3>
+                                        <div class="result-value" id="timelineOverrun">--</div>
+                                        <div class="result-label">Predicted Delay</div>
+                                    </div>
+                                    <div class="result-card risk-level">
+                                        <h3>Risk Level</h3>
+                                        <div class="result-value" id="riskLevel">--</div>
+                                        <div class="result-label">Overall Assessment</div>
+                                    </div>
+                                    <div class="result-card confidence">
+                                        <h3>Confidence</h3>
+                                        <div class="result-value" id="confidenceScore">--</div>
+                                        <div class="result-label">Prediction Accuracy</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Visualizations Section -->
+                    <section class="visualizations-section">
+                        <div class="charts-grid">
+                            <div class="card">
+                                <div class="card__header">
+                                    <h3>Top Risk Factors</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="riskFactorsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card__header">
+                                    <h3>Overall Risk Meter</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="riskMeterChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card chart-full-width">
+                                <div class="card__header">
+                                    <h3>Historical Comparison</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="historicalChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="container">
+                <p>&copy; 2024 POWERGRID Corporation of India Limited. ML Project for SIH 2024.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
